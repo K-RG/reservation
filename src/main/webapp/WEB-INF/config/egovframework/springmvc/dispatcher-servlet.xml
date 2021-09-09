@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:mvc="http://www.springframework.org/schema/mvc"
+        xmlns:beans="http://www.springframework.org/schema/beans"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+    <!-- 스프링 MVC 기능 활성화 -->
+    <mvc:annotation-driven/>
+    <!--<context:annotation-config />-->
+    
+    <mvc:default-servlet-handler/>
+    
+    <context:property-placeholder location="classpath:egovframework/properties/file.properties" order="1" ignore-unresolvable="true"/>
+
+    <!-- 첨부파일설정 -->
+    <bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="${file.size}"/>
+		<property name="resolveLazily" value="true"/>
+		<property name="defaultEncoding" value="UTF-8"/>
+	</bean>
+    
+    <!-- 
+        basePackages를 포함한 하위 패키지를 검색해서
+        @Component, @Service, @Repository, @Controller 어노테이션이 붙어 있는 클래스들을
+        스프링 빈으로 자동 등록 
+    -->
+    <context:component-scan base-package="egovframework.com.reservation"/>
+ 
+    <!-- Spring Bean 등록 (JSP, JSTL 사용)-->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    <!-- 
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="webBindingInitializer">
+            <bean class="org.springframework.web.bind.support.ConfigurableWebBindingInitializer">
+                <property name="validator" ref="validator"/>
+            </bean>
+        </property>
+    </bean>
+     -->
+ <!--     
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+  -->
+   <!--  <mvc:interceptors>
+        <bean class="org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor">
+            <property name="entityManagerFactory" ref="entityManagerFactory" />
+        </bean>
+        
+        <mvc:interceptor>
+        
+        	<mvc:mapping path="/board/register.do"/>
+        	<mvc:mapping path="/board/update.do"/>
+        	<mvc:mapping path="/board/save.do"/>
+        	<mvc:mapping path="/board/delete.do"/>
+        	<mvc:mapping path="/board/reply.do"/>
+        	
+        	<mvc:mapping path="/mngr/**/list.do"/>
+        	<mvc:mapping path="/mngr/**/register.do"/>
+        	<mvc:mapping path="/mngr/**/update.do"/>
+        	<mvc:mapping path="/mngr/**/delete.do"/>
+        	<mvc:mapping path="/mngr/**/save.do"/>
+        	<mvc:mapping path="/mngr/**/view.do"/>
+        	<mvc:mapping path="/mngr/**/action.do"/>
+        	
+        	<mvc:mapping path="/mngr/**/**/list.do"/>
+        	<mvc:mapping path="/mngr/**/**/register.do"/>
+        	<mvc:mapping path="/mngr/**/**/update.do"/>
+        	<mvc:mapping path="/mngr/**/**/delete.do"/>
+        	<mvc:mapping path="/mngr/**/**/save.do"/>
+        	<mvc:mapping path="/mngr/**/**/view.do"/>
+        	<mvc:mapping path="/mngr/**/**/action.do"/>
+        	
+        	<mvc:exclude-mapping path="/mngr/login/action.do"/>
+        	
+        	<bean id="loginInterceptor" class="egovframework.com.cms.common.interceptor.LoginInterceptor"/>
+        </mvc:interceptor>
+        보류
+        <mvc:interceptor>
+        
+        	<mvc:mapping path="/mngr/**/list.do"/>
+        	<mvc:mapping path="/mngr/**/register.do"/>
+        	<mvc:mapping path="/mngr/**/update.do"/>
+        	<mvc:mapping path="/mngr/**/delete.do"/>
+        	<mvc:mapping path="/mngr/**/action.do"/>
+        	
+        	<mvc:mapping path="/mngr/**/**/list.do"/>
+        	<mvc:mapping path="/mngr/**/**/register.do"/>
+        	<mvc:mapping path="/mngr/**/**/update.do"/>
+        	<mvc:mapping path="/mngr/**/**/delete.do"/>
+        	<mvc:mapping path="/mngr/**/**/action.do"/>
+        	
+        	<mvc:exclude-mapping path="/mngr/login/action.do"/>
+        	<mvc:exclude-mapping path="/mngr/auth/**/**.do"/>
+        
+        	<bean id="adminMenuInterceptor" class="egovframework.com.cms.common.interceptor.AdminMenuInterceptor"/>
+        </mvc:interceptor>
+        
+    </mvc:interceptors> -->
+
+</beans>
