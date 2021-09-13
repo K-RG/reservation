@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import egovframework.com.reservation.company.model.CompanyVO;
 import egovframework.com.reservation.room.model.RoomVO;
 import egovframework.com.reservation.room.repository.RoomRepository;
 
@@ -34,30 +35,63 @@ public class RoomService {
 	public void deleteRoom(String roomUUID) {
 		roomRepository.delete(roomUUID);
 	}
-	/*
-	public List<RoomVO> findByCompanyRoomList(){
-		return roomRepository.findByCompanyRoomList();
+	
+	public List<RoomVO> findAllRoom(){
+		return roomRepository.findAll();
 	}
 	
+	/*
+	 * 객실중 최고 층수 구하기 
+	 */
+	public int findbyMaxRoomFloor() {
+		return roomRepository.findbyMaxRoomFloor();
+	}
+	/*
 	 * companyUUID = 사업자
 	 * roomfloor = 층수 (gubun 값으로 받아옴)
+	 * useAt = 0 예약 가능 , 1 예약중
 	 */
 	@SuppressWarnings("unchecked")
-	public List<RoomVO> findRoomListByCompanyUUID(int roomFloor){
+	public List<RoomVO> findRoomList(String companyUUID,int roomFloor,int useAt){
 		//SELECT r.* from RoomVO r <if
 		StringBuffer sb = new StringBuffer();
 		sb.append("	SELECT r");
-		sb.append("		FROM RoomVO r");
+		sb.append("		FROM RoomVO r JOIN CompanyVO c on r.companyVO = c");
 		sb.append("	WHERE 1=1");
-		sb.append(" 	AND r.roomFloor   =:roomFloor");
+		sb.append("		AND r.roomFloor   =:roomFloor   ");
+		if(useAt != 2) {
+		sb.append("		AND r.useAt =:useAt ");
+		}
+		if(companyUUID != null && !"".equals(companyUUID)) {
+		sb.append("		AND c.companyUUID =:companyUUID ");
+		}
 		
-		Query query = em.createQuery(sb.toString())
-						.setParameter("roomFloor", roomFloor);
-		
+		Query query = em.createQuery(sb.toString());
+			query.setParameter("roomFloor", roomFloor);
+		if(useAt != 2) {
+			query.setParameter("useAt", useAt);
+		}
+		if(companyUUID != null && !"".equals(companyUUID)) {
+			query.setParameter("companyUUID", companyUUID);
+		}
 		return query.getResultList();
 	}
-	
-	
+	/*
+	@SuppressWarnings("unchecked")
+	public List<RoomVO> findChildList(String companyUUID){
+		System.out.println("-------------check2-------------");
+		StringBuffer sb = new StringBuffer();
+		sb.append(" SELECT r");
+		sb.append("		FROM  RoomVO r");
+		sb.append("	WHERE 1=1");
+		sb.append("		AND r.companyVO =:companyUUID ");
+		
+		Query query = em.createQuery(sb.toString())
+				.setParameter("companyUUID", companyUUID);
+		System.out.println("-------------check3-------------");
+		return query.getResultList();
+	}
+	*/
 }
 // 검색 쿼리
 //SELECT 

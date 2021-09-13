@@ -57,15 +57,11 @@ public class CompanyService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<CompanyVO> gegegegegegegegegege(String companyUUID) {
+	public List<CompanyVO> gegegegegegegegegege() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("				SELECT r			");
-		sb.append("					FROM CompanyVO r					");
-		sb.append("		WHERE r.companyUUID = :companyUUID							");
+		sb.append("				SELECT r");
+		sb.append("		FROM CompanyVO r");
 		Query query = em.createQuery(sb.toString());
-		if(companyUUID != null && "".equals(companyUUID)) {
-			query.setParameter("companyUUID", companyUUID);
-		}
 		
 		return query.getResultList();
 	}
@@ -114,19 +110,4 @@ public class CompanyService {
 		return query.getResultList();
 	}
 	*/
-	
-	@SuppressWarnings("unchecked")
-	public List<RoomVO> findChildList(String companyVO){
-		System.out.println("-------------check2-------------");
-		StringBuffer sb = new StringBuffer();
-		sb.append(" SELECT c");
-		sb.append("		FROM CompanyVO c, RoomVO r");
-		sb.append("	WHERE 1=1");
-		sb.append("		AND r.companyVO =:companyVO");
-		
-		Query query = em.createQuery(sb.toString())
-				.setParameter("companyVO", companyVO);
-		System.out.println("-------------check3-------------");
-		return query.getResultList();
-	}
 }

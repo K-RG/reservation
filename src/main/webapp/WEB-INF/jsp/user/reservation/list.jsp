@@ -12,7 +12,7 @@
 	<jsp:include page="/WEB-INF/jsp/user/template/header.jsp" flush="true">
 		<jsp:param value="ROOM ${fn:toUpperCase(mode)}" name="headerTitle"/>
 	</jsp:include>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+	
 </head>
 <body>
 	<jsp:include page="/WEB-INF/jsp/user/template/top.jsp" flush="true"></jsp:include>
@@ -92,26 +92,7 @@
 	</div>
 	<jsp:include page="/WEB-INF/jsp/common/commonForm.jsp" flush="true"></jsp:include>
 	<script type="text/javascript">
-		var roomReservationUUID = '${roomReservationUUID}';	
-		var company = '${companyBank}';
-		var depositor = '${depositor}';
-		
-		if(roomReservationUUID.trim() != "" && company.trim() != "" ){
-			Swal.fire({
-                icon: 'success',
-                title: '예약 완료',
-                html: '<table><tr><th>예약 번호</th><td colspan="3">'+roomReservationUUID+"</td></tr>"
-                		+"<tr><th>은행명</th><td>${fn:split(companyBank,'-')[0]}</td><th>예금주</th><td>${fn:split(companyBank,'-')[2]}</td></tr>"
-                		+"<tr><th>계좌번호</th><td> ${fn:split(companyBank,'-')[1]}</td><th>입금자명</th><td>"+depositor+"</td></tr>"
-                		+"</table>"
-            })
-		}else if(roomReservationUUID.trim() != "" || companyBank.trim() != "" ){
-			Swal.fire({
-                icon: 'success',
-                title: '예약 완료',
-                text: '예약 번호 : '+roomReservationUUID
-            })
-		}
+
 		
 		
 		var gubun = '${gubun}';

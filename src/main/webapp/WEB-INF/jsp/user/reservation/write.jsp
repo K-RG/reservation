@@ -17,12 +17,15 @@
 	<jsp:include page="/WEB-INF/jsp/user/template/left.jsp" flush="true"></jsp:include>
 	<script type="text/javascript" src="<c:url value='/resources/ckEditor/ckeditor.js'/>"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
+<script type="text/javascript" src="https://service.iamport.kr/js/iamport.payment-1.1.2.js"></script>
 		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-		<h2 class="sub-header">예약 객실 정보</h2>
-		<br>
+		<h2 class="sub-header">ROOM RESERVATION</h2>
+		<hr/>
+			<h3>예약 객실 정보</h3>
+			<br>
 			<form id="roomReservationInfo" enctype="multipart/form-data">
 				<input type="hidden" id="mode" name="mode" value="${mode}">
+				<input type="text" id="roomUUID" name="roomUUID" value="${roomVO.roomUUID}">
 				<div class="row">
 					<div class="col-sm-12 pt-3">
 						<div class="form-row">
@@ -35,34 +38,6 @@
 									<label for="ceoName">사업장 전화번호</label>
 								<input type="text" id="companyCellPhone" name="companyCellPhone" class="form-control" value="${roomVO.companyVO.strCompanyCellPhone}" readonly style="float: right;">
 								</div>
-							</div>
-						</div>
-						<div class="form-row">
-							<div class="form-group">
-								<div class="form-inline">	
-									<label for="companyName" style="margin-right: 1.9%;">사업장 검색</label>
-									<select class="form-control" name="company" id="company" style="width: 12.7%;">
-										<c:forEach var="item" items="${companyList}">
-											<option value="${item.companyUUID}" <c:if test="${item.companyUUID eq roomVO.companyVO.companyUUID }">selected</c:if>>${item.companyName}</option>
-										</c:forEach>
-									</select>
-									<div class="form-group col-sm1" style="margin-right: 6.2%;">	
-										<button type="button" class="btn btn-default btn-primary" id="btnCompanySearch">검색</button>
-									</div>
-									<label for="companyAddress" style="margin-right: 4.4%;">방 번호</label>
-									<select class="form-control" name="roomUUID" id="roomUUID" style="width: 17.5%;">
-										<option>방 번호 선택</option>
-										<c:if test="${roomVO != null}">
-										<option value="${roomVO.roomUUID}" selected>${roomVO.roomNumber }</option>
-										</c:if>
-									</select>
-									<div class="form-group col-sm1" style="margin-right: 5.7%;">	
-										<button type="button" class="btn btn-default btn-primary" id="btnRoomPick">선택</button>
-										<button type="button" class="btn btn-default btn-primary" id="btnRoomCancle">취소</button>
-									</div>
-									<label for="roomName">방 이름</label>
-									<input type="text" id="roomName" name="roomName" class="form-control" value="${roomVO.roomName}" readonly style="float: right;">
-								</div> 
 							</div>
 						</div>
 						<div class="form-row" >
@@ -79,7 +54,7 @@
 							</div>
 						</div>
 						<hr/>
-						<h2 class="sub-header">고객 정보 작성</h2>
+						<h3 class="sub-header">고객 예약 정보</h3>
 						<br>
 						<div class="form-row">
 							<div class="form-group">
@@ -87,25 +62,26 @@
 									<label for="roomFloor" style="margin-right:1.9%">예약자 이름</label>
 									<input type="text" id="roomReservationName" name="roomReservationName" class="form-control" value=""  style="margin-right: 16%">
 									<label for="phoneCheck" style="margin-right: 1.5%;">예약자 연락처</label>
-									<input type="text" id="roomReservationCellPhone" name="roomReservationCellPhone" class="form-control" readonly style="margin-right: 12%">
-									<label for="roomStandardPeople" style="margin-right:1%">결제 유형</label>
-									<select class="form-control" id="roomReservationPaymentType" name="roomReservationPaymentType" style="float: right;width: 12.7%;">
-										<option value="0">직접 결제</option>
-										<option value="1">무통장 입금</option>
-										<option value="2">카드 결제</option>
-									</select>
+									<input type="text" id="roomReservationCellPhone" name="roomReservationCellPhone" class="form-control" style="margin-right: 12%">
+									<label for="" style="margin-right:2.8%">예약 인원</label>
+									<input type="number" id="roomReservationPeople" name="roomReservationPeople" class="form-control" value="" style="width: 12.7%;float: right;" min="1" max="10" maxlength="2">
+									
 								</div>
 							</div>
 						</div>
 						<div class="form-row">
 							<div class="form-group">
 								<div class="form-inline">
-									<label for="" style="margin-right:2.8%">예약 인원</label>
-									<input type="number" id="roomReservationPeople" name="roomReservationPeople" class="form-control" value="" style="width: 12.7%;margin-right: 16%;" min="1" max="10" maxlength="2">
-									<label for="roomFloor" style="margin-right:3.3%">입실 날짜</label>
-									<input type="date" id="startDay" name="startDay" class="form-control" style="width: 12.7%;margin-right: 12%;">
+									<label for="roomFloor" style="margin-right:2.8%">입실 날짜</label>
+									<input type="date" id="startDay" name="startDay" class="form-control" style="width: 12.7%;margin-right: 16%;">
 									<label for="phoneCheck" style="margin-right: 3.3%;">퇴실 날짜</label>
-									<input type="date" id="endDay" name="endDay" class="form-control" style="width: 12.7%;float: right;">
+									<input type="date" id="endDay" name="endDay" class="form-control" style="width: 12.7%;margin-right: 12%">
+									<label for="roomStandardPeople" style="margin-right:1%">결제 유형</label>
+									<select class="form-control" id="roomReservationPaymentType" name="roomReservationPaymentType" style="float: right;width: 12.7%;">
+										<option value="0">직접 결제</option>
+										<option value="1">무통장 입금</option>
+										<option value="2">카드 결제</option>
+									</select>
 								</div>
 							</div>
 						</div>
@@ -120,6 +96,7 @@
 						<div class="text-right">
 	            			<button type="button" class="btn btn-primary" id="btnList">목록</button>
 	            			<button type="button" class="btn btn-default" id="btnSave">${fn:toUpperCase(mode)}</button>
+	            			<button type="button" onclick="requestPay()">asas</button>
 	            		</div>
 					</div>
 				</div>
@@ -129,66 +106,48 @@
 	<iframe id="iframe1" name="iframe1" style="display:none"></iframe>
 	<jsp:include page="/WEB-INF/jsp/common/commonForm.jsp" flush="true"></jsp:include>
 	<script type="text/javascript">
+		/* var IMP = window.IMP;
+		IMP.init("imp09043785");
+		function requestPay() {
+	      // IMP.request_pay(param, callback) 결제창 호출
+	      IMP.request_pay({ // param
+	          pg: "html5_inicis",
+	          pay_method: "card",
+	          merchant_uid: ${roomVO.roomUUID},
+	          name:	${roomVO.roomName},
+	          amount: ${roomVO.roomPriceStandard},
+	          buyer_name:  $("#roomReservationName").val(),
+	          buyer_tel: $("#roomReservationCellPhone").val(),
+	      }, function (rsp) { // callback
+	          if (rsp.success) {
+	              // 결제 성공 시 로직,
+	          } else {
+	              // 결제 실패 시 로직,
+	          }
+	      });
+	    } */
+		var IMP = window.IMP;
+		IMP.init("imp09043785");
+		
+		function requestPay() {
+		      // IMP.request_pay(param, callback) 결제창 호출
+		      IMP.request_pay({ // param
+		          pg: "html5_inicis",
+		          pay_method: "card",
+		          merchant_uid: $("#roomUUID").val(),
+		          name: ${roomVO.roomName},
+		          amount: ${roomVO.roomPriceStandard},
+		          buyer_name: $("#roomReservationName").val(),
+		          buyer_tel: $("#roomReservationCellPhone").val(),
+		      }, function (rsp) { // callback
+		          if (rsp.success) {
+		              // 결제 성공 시 로직,
+		          } else {
+		              // 결제 실패 시 로직,
+		          }
+		      });
+		    } 
 		$(function(){
-			$("#btnCompanySearch").click(function(){
-				var companyUUID = $("#companyUUID").val();
-				$.ajax({
-					url:"/user/reservation/companySearch.do",
-					data: $("#company"),
-					dataType:"json",
-					success:function(data){
-						var roomUUID = "";
-						var company = new Array();
-						if(data.childRoomList.length > 0){
-							company[0] = data.company.companyName;
-							company[1] = "("+data.company.companyPostCode+")"+data.company.companyAddress+data.company.companyDetailAddress;
-							company[2] = data.company.companyCellPhoneFst+"-"+data.company.companyCellPhoneSnd+"-"+data.company.companyCellPhoneTrd;
-							roomUUID += "<option selected>방 번호 선택</option>";
-							for(var i=0; i<data.childRoomList.length; i++){
-								roomUUID += "<option value='"+data.childRoomList[i].roomUUID+"'>";
-								roomUUID += data.childRoomList[i].roomNumber+"</option>";
-							}
-						}else{
-							alert("해당 정보가 존재하지 않습니다. 관리자에게 문의 해주세요.");
-							company[0] = "정보 없음";
-							company[1] = "정보 없음";
-							company[2] = "정보 없음";
-							roomUUID += "<option selected>정보 없음</option>";
-						}
-						$("#companyName").attr("value",company[0]);
-						$("#companyAddress").attr("value",company[1]);
-						$("#companyCellPhone").attr("value",company[2]);
-						$("#roomUUID").html(roomUUID);
-					},
-					error:function(){
-						alert("해당 정보가 존재하지 않습니다. 관리자에게 문의 해주세요.");
-					}
-				});
-			});
-			$("#roomUUID").on("change",function(){
-				var roomUUID = $("#roomUUID").val();
-				$.ajax({
-					url:"/user/reservation/roomSearch.do",
-					data: $("#roomUUID"),
-					dataType:"json",
-					success:function(roomInfo){
-						var room = new Array();
-						if(roomInfo != null){
-							room[0] = roomInfo.roomName;
-							room[1] = roomInfo.roomCheckInTime.split(':');
-							room[2] = roomInfo.roomCheckOutTime.split(':');
-						}else{
-							alert("해당 방에 대한 정보가 없습니다. 관리자에게 문의 해주세요.");
-						}
-						$("#roomName").attr("value",room[0]);
-						$("#roomCheckInTime").attr("value",room[1][0]+":"+room[1][1]+room[1][2].substring(3));
-						$("#roomCheckOutTime").attr("value",room[2][0]+":"+room[2][1]+room[2][2].substring(3));
-					},
-					error:function(){
-						alert("해당 방에 대한 정보가 없습니다. 관리자에게 문의 해주세요.");
-					}
-				});
-			});
 			CKEDITOR.replace('roomReservationRequest', {
 				filebrowserUploadUrl:'/ckeditor/fileupload.do'
 			});
@@ -208,12 +167,6 @@
 				e.preventDefault();
 				fn_check();
 			});
-			$("#btnRoomPick").on("click",function(){
-				$("#roomUUID").attr("disabled",'true');
-			});
-			$("#btnRoomCancle").on("click",function(){
-				$("#roomUUID").removeAttr("disabled");
-			});
 
 			function fn_check(){
 				window.open("/user/reservation/check.do","_blank","width=500, height=300");
@@ -227,17 +180,11 @@
 			
 			function fn_save() {
 				
-				if(!$("#roomName").val()){
-					alert('방 이름을 입력해주십시오.');
-					$("#roomName").focus();
-					return false;
-				}
 				var mode = '${mode}';
 				var gubun = "${gubun}";
 				var comSubmit = new ComSubmit("roomReservationInfo");
 				comSubmit.addParam("roomReservationCellPhone",$("#roomReservationCellPhone").val());
 				comSubmit.addParam("gubun",gubun);
-				comSubmit.addParam("roomUUID",$("#roomUUID").val());
 				if(mode == 'update'){
 					comSubmit.setUrl("/user/reservation/update.do");
 	                comSubmit.submit();
@@ -245,10 +192,94 @@
 					comSubmit.setUrl("/user/reservation/save.do");
 	                comSubmit.submit();
 				}
-				
-				
 			}
+			
+			/* var IMP = window.IMP;
+			IMP.init("imp09043785");
+			
+			function requestPay() {
+			      // IMP.request_pay(param, callback) 결제창 호출
+			      IMP.request_pay({ // param
+			          pg: "html5_inicis",
+			          pay_method: "card",
+			          merchant_uid: "ORD20180131-0000011",
+			          name: "노르웨이 회전 의자",
+			          amount: 64900,
+			          buyer_email: "gildong@gmail.com",
+			          buyer_name: "홍길동",
+			          buyer_tel: "010-4242-4242",
+			          buyer_addr: "서울특별시 강남구 신사동",
+			          buyer_postcode: "01181"
+			      }, function (rsp) { // callback
+			          if (rsp.success) {
+			              // 결제 성공 시 로직,
+			          } else {
+			              // 결제 실패 시 로직,
+			          }
+			      });
+			    } */
 		});
+		/*
+		$("#btnCompanySearch").click(function(){
+			var companyUUID = $("#companyUUID").val();
+			$.ajax({
+				url:"/user/reservation/companySearch.do",
+				data: $("#company"),
+				dataType:"json",
+				success:function(data){
+					var roomUUID = "";
+					var company = new Array();
+					if(data.childRoomList.length > 0){
+						company[0] = data.company.companyName;
+						company[1] = "("+data.company.companyPostCode+")"+data.company.companyAddress+data.company.companyDetailAddress;
+						company[2] = data.company.companyCellPhoneFst+"-"+data.company.companyCellPhoneSnd+"-"+data.company.companyCellPhoneTrd;
+						roomUUID += "<option selected>방 번호 선택</option>";
+						for(var i=0; i<data.childRoomList.length; i++){
+							roomUUID += "<option value='"+data.childRoomList[i].roomUUID+"'>";
+							roomUUID += data.childRoomList[i].roomNumber+"</option>";
+						}
+					}else{
+						alert("해당 정보가 존재하지 않습니다. 관리자에게 문의 해주세요.");
+						company[0] = "정보 없음";
+						company[1] = "정보 없음";
+						company[2] = "정보 없음";
+						roomUUID += "<option selected>정보 없음</option>";
+					}
+					$("#companyName").attr("value",company[0]);
+					$("#companyAddress").attr("value",company[1]);
+					$("#companyCellPhone").attr("value",company[2]);
+					$("#roomUUID").html(roomUUID);
+				},
+				error:function(){
+					alert("해당 정보가 존재하지 않습니다. 관리자에게 문의 해주세요.");
+				}
+			});
+		});
+		$("#roomUUID").on("change",function(){
+			var roomUUID = $("#roomUUID").val();
+			$.ajax({
+				url:"/user/reservation/roomSearch.do",
+				data: $("#roomUUID"),
+				dataType:"json",
+				success:function(roomInfo){
+					var room = new Array();
+					if(roomInfo != null){
+						room[0] = roomInfo.roomName;
+						room[1] = roomInfo.roomCheckInTime.split(':');
+						room[2] = roomInfo.roomCheckOutTime.split(':');
+					}else{
+						alert("해당 방에 대한 정보가 없습니다. 관리자에게 문의 해주세요.");
+					}
+					$("#roomName").attr("value",room[0]);
+					$("#roomCheckInTime").attr("value",room[1][0]+":"+room[1][1]+room[1][2].substring(3));
+					$("#roomCheckOutTime").attr("value",room[2][0]+":"+room[2][1]+room[2][2].substring(3));
+				},
+				error:function(){
+					alert("해당 방에 대한 정보가 없습니다. 관리자에게 문의 해주세요.");
+				}
+			});
+		});
+		*/
 	</script>
 </body>
 </html>

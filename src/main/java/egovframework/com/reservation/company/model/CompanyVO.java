@@ -170,21 +170,22 @@ public class CompanyVO extends Temporal{
 	@Column(name="MODIFY_ID")
 	private String modifyId;
 
-	@OneToMany(mappedBy = "companyVO", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Collection<RoomVO> room = new ArrayList<RoomVO>();
+	@OneToMany(mappedBy = "companyVO",cascade = CascadeType.DETACH,  orphanRemoval = true)
+	private List<RoomVO> room = new ArrayList<RoomVO>();
 	
-	public Collection<RoomVO> getRoom() {
+	public List<RoomVO> getRoom() {
 		return room;
 	}
 
-	public void setRoom(Collection<RoomVO> room) {
+	public void setRoom(List<RoomVO> room) {
 		this.room = room;
 	}
 
 	public void addToRoom(RoomVO roomVO) {
-		roomVO.setCompanyVO(this);
 		this.room.add(roomVO);
+		roomVO.setCompanyVO(this);
 	}
+	
 	public String getCompanyUUID() {
 		return companyUUID;
 	}

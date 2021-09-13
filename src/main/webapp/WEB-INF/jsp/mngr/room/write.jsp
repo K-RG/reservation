@@ -19,10 +19,10 @@
 	
 	
 		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-		<h2 class="sub-header">COMPANY ${fn:toUpperCase(mode)}</h2>
+		<h2 class="sub-header">COMPANY ROOM ${fn:toUpperCase(mode)}</h2>
 			<form id="roomWriteFrm">
 				<input type="hidden" id="mode" name="mode" value="${mode}">
-				<input type="text" id="companyUUID" name="companyUUID" value="${company}">
+				<input type="hidden" id="companyUUID" name="companyUUID" value="${companyUUID}">
 				<c:if test="${mode eq 'update' }">
 				<input type="hidden" id="roomUUID" name="roomUUID" value="${roomVO.roomUUID}">
 				</c:if> 
@@ -112,8 +112,6 @@
 	            		</div>
 					</div>
 				</div>
-				<input id="fromDate" type="text">
-				<input id="toDate" type="text">
 			</form>
 		</div>
 	</div>

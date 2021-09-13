@@ -50,7 +50,7 @@ public class FileController {
 	
 	@RequestMapping(value="/ckeditor/fileupload.do", method=RequestMethod.POST)
 	@ResponseBody
-	public String fileupload(HttpServletRequest request, HttpServletResponse response, MultipartHttpServletRequest multiFile) throws IOException {
+	public void fileupload(HttpServletRequest request, HttpServletResponse response, MultipartHttpServletRequest multiFile) throws IOException {
 		logger.info("---------------- fileupload ----------------");
 		
 		PrintWriter pw = null;
@@ -109,7 +109,7 @@ public class FileController {
 			}
 		}
 		
-		return null;
+		return;
 	}       
 	
 	@RequestMapping("/ckeditor/imgsubmit.do")

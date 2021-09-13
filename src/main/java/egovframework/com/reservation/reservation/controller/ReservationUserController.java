@@ -8,6 +8,8 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,12 +27,15 @@ import egovframework.com.reservation.reservation.model.RoomReservationVO;
 import egovframework.com.reservation.reservation.repository.RoomReservationRepository;
 import egovframework.com.reservation.reservation.service.CheckService;
 import egovframework.com.reservation.reservation.service.RoomReservationService;
+import egovframework.com.reservation.room.controller.RoomMngrController;
 import egovframework.com.reservation.room.model.RoomVO;
 import egovframework.com.reservation.room.service.RoomService;
 
 @Controller
 @RequestMapping("/user/reservation")
 public class ReservationUserController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(RoomMngrController.class);
 
 	@Autowired
 	CheckService checkService;
@@ -44,28 +49,17 @@ public class ReservationUserController {
 	@Autowired
 	RoomReservationService roomReservationService;
 	
-	@RequestMapping("/list.do")
-	public String list(@RequestParam Map<String,String> paramMap, Model model, SearchVO searchVO, HttpServletRequest request) {
-		String roomReservationUUID = paramMap.get("roomReservationUUID") == null ? "" : paramMap.get("roomReservationUUID");
-		String companyBank = paramMap.get("companyBank");
-		String depositor = paramMap.get("depositor");
-		
-		int gubun = paramMap.get("gubun") == null ? 1 : Integer.parseInt(paramMap.get("gubun"));
-		
-		addAttribute(model, searchVO);
-		model.addAttribute("gubun",gubun);
-		model.addAttribute("companyBank",companyBank);
-		model.addAttribute("depositor",depositor);
-		model.addAttribute("roomReservationUUID",roomReservationUUID);
-		
-		return "/user/reservation/list";
-	}
-	
-	
 	@RequestMapping("/select.do")
 	public String select(@RequestParam Map<String,String> paramMap, Model model) {
 		int gubun = paramMap.get("gubun") == null ? 1 : Integer.parseInt(paramMap.get("gubun"));
 		
+		String roomReservationUUID = paramMap.get("roomReservationUUID") == null ? "" : paramMap.get("roomReservationUUID");
+		String companyBank = paramMap.get("companyBank");
+		String depositor = paramMap.get("depositor");
+		
+		model.addAttribute("roomReservationUUID",roomReservationUUID);
+		model.addAttribute("companyBank",companyBank);
+		model.addAttribute("depositor",depositor);
 		model.addAttribute("gubun",gubun);
 		model.addAttribute("mode","select");
 		
@@ -77,8 +71,7 @@ public class ReservationUserController {
 		
 		if(paramMap.get("roomReservationUUID") != null) {
 			String roomReservationUUID = paramMap.get("roomReservationUUID");
-			roomReservationVO = roomReservationService.findOneReservation(roomReservationUUID);
-			
+			roomReservationVO = roomReservationService.findbyRoomReservationUUID(roomReservationUUID);
 			if(roomReservationVO == null) {
 				model.addAttribute("returnUrl","/user/reservation/select.do")
 				.addAttribute("mode","select")
@@ -118,14 +111,23 @@ public class ReservationUserController {
 	}
 	
 	@RequestMapping("/save.do")
-	public String save(@RequestParam Map<String,String> paramMap, RoomReservationVO roomReservationVO, Model model) {
+	public String save(@RequestParam Map<String,String> paramMap, RoomReservationVO roomReservationVO, RoomVO roomVO, Model model) {
+		logger.info("=======================roomSelect End"+roomVO.getRoomUUID());
+		roomVO = roomService.findOneRoom(roomVO.getRoomUUID());
+		roomVO.setUseAt(1);
 		String phone[] = paramMap.get("roomReservationCellPhone").split("-");
+		roomReservationVO.setRoomVO(roomVO);
 		roomReservationVO.setRoomReservationCellPhoneFst(Integer.parseInt(phone[0]));
 		roomReservationVO.setRoomReservationCellPhoneSnd(Integer.parseInt(phone[1]));
 		roomReservationVO.setRoomReservationCellPhoneTrd(Integer.parseInt(phone[2]));
+		
+		logger.info("=======================reservation get roomVO"+roomVO.getRoomUUID());
 		roomReservationVO.setRegistId("user");
 		roomReservationVO.setRegistDt(new Date());
 		roomReservationService.saveReservation(roomReservationVO);
+		roomService.saveRoom(roomVO);
+		//roomVO.addToRservatrion(roomReservationVO);
+		
 		
 		RoomReservationVO roomReservationVO2 = roomReservationService.findOneReservation(((roomReservationService.saveReservation(roomReservationVO)).getRoomReservationUUID()));
 		
@@ -136,7 +138,8 @@ public class ReservationUserController {
 		
 		model.addAttribute("roomReservationUUID", roomReservationVO2.getRoomReservationUUID());
 		
-		return "redirect:/user/reservation/list.do";
+		
+		return "redirect:/user/reservation/select.do";
 	}
 	
 	@RequestMapping("/check.do")
@@ -163,7 +166,8 @@ public class ReservationUserController {
 		
 		return numStr; 
 	}
-	
+
+	/*
 	@RequestMapping("/companySearch.do")
 	@ResponseBody
 	public Map<String,Object> searchCompanyList(String company){
@@ -194,7 +198,7 @@ public class ReservationUserController {
 		
 		return roomInfo;
 	}
-	
+	*/
 	private void addAttribute(Model model, SearchVO searchVO) {
 			
 		model.addAttribute("mode", searchVO.getMode())

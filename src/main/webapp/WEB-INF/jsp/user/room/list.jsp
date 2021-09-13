@@ -40,24 +40,14 @@
 		
 		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 			<h2 class="sub-header form-group">${title} LIST</h2>
-			<div class="form-inline text-right form-group">
-				<div class="row col-md-1">
-				    <button type="button" class="btn btn-outline-info" >전체 사업장 객실보기</button>	
-				</div>
-				<div class="form-group col-sm2">
-					<select class="form-control" name="companyUUID" id="companyUUID">
-						<c:forEach var="list" items="${companyList}">
-						<option value="${list.companyUUID}" <c:if test="${companyUUID eq list.companyUUID}">selected</c:if>>${list.companyName }</option>
-						</c:forEach>
-					</select>
-				</div>
+			<div class="form-inline text-center form-group">
 				<div class="form-group col-sm6">	
-					<input type="text" class="form-control" name="searchContent" id="searchContent" value="${searchContent}" />
+					<input type="date" class="form-control" name="startDay" id="startDay" value="${searchContent}">
+					<input type="date" class="form-control" name="endDay" id="endDay" value="${searchContent}">
 				</div>	
 				<div class="form-group col-sm1">	
 					<button type="button" class="btn btn-default btn-primary" id="btnSearch">검색</button>
 				</div>
-				
 			</div>
 			<div class="table-responsive">
 				<table class="table table-striped" id="myTable">
@@ -78,7 +68,7 @@
 						<c:forEach var="item" items="${roomList}" varStatus="status">
 						<tr>
 							<td class="text-center">${status.count}</td>
-							<td class="text-center">${item.companyUUID.companyName}</td>
+							<td class="text-center">${item.companyVO.companyName}</td>
 							<td class="text-center">
 								<input type="hidden" value="${item.roomUUID}">
 								<a href="#" onclick="fn_view('${item.roomUUID}'); return false;">${item.roomName}</a>
@@ -107,7 +97,22 @@
 	</div>
 	<jsp:include page="/WEB-INF/jsp/common/commonForm.jsp" flush="true"></jsp:include>
 	<script type="text/javascript">
+		$(function(){
+			$("#btnSearch").click(function(e){
+				e.preventDefault();
+				fn_search();
+			});
+		})
 		var gubun = '${gubun}';
+		
+		function fn_search(){
+			var comSubmit = new ComSubmit();
+			comSubmit.setUrl("/user/room/list.do");
+			comSubmit.addParam("startDay",$("#startDay").val());
+			comSubmit.addParam("endDay",$("#endDay").val());
+			comSubmit.submit();
+		}
+		
 		function fn_see(uuid){
 			var comSubmit = new ComSubmit();
 			comSubmit.setUrl("/user/room/view.do");

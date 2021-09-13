@@ -9,6 +9,9 @@ import egovframework.com.reservation.room.model.RoomVO;
 
 public interface RoomRepository extends JpaRepository<RoomVO, String> {
 
+	
+	@Query("SELECT MAX(r.roomFloor) FROM RoomVO r")
+	Integer findbyMaxRoomFloor();
 	/*
 	 * @Query(value =
 	 * "SELECT r (SELECT c.companyName FROM CompanyVO c WHERE c.companyUUID = r.companyUUID)b FROM RoomVO r WHERE 1=1 AND r.roomFloor :roomFloor "

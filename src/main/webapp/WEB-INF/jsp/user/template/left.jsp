@@ -22,7 +22,7 @@
 			
 			<c:when test="${(fn:indexOf(path, '/user/room/') ne -1)}">
 			<ul class="nav nav-sidebar">
-				<c:forEach var="roomFloor" begin="1" end="${companyVO.companyRoomFloor}" varStatus="floor">
+				<c:forEach var="roomFloor" begin="1" end="${maxRoomFloor}" varStatus="floor">
 				<li <c:if test="${gubun eq floor.current}">class="active"</c:if>>
 	            	<a href="/user/room/list.do?companyUUID=${companyVO.companyUUID}&gubun=${floor.current}">${floor.current}층 <c:if test="${gubun eq floor.current}"><span class="sr-only">(current)</span></c:if></a>
 	            </li>
@@ -32,16 +32,12 @@
 			
 			<c:when test="${fn:indexOf(path, '/user/reservation/') ne -1}">
 			<ul class="nav nav-sidebar">
-				<li <c:if test="${gubun eq 1}">class="active"</c:if> >
+				<%-- <li <c:if test="${gubun eq 1}">class="active"</c:if> >
 	            	<a href="/user/reservation/list.do?gubun=1">예약 가능 객실  <c:if test="${gubun eq 1}"><span class="sr-only">(current)</span></c:if></a>
+	            </li> --%>
+				<li <c:if test="${gubun eq 1}">class="active"</c:if> >
+	            	<a href="/user/reservation/select.do?gubun=1">예약 조회 <c:if test="${gubun eq 1}"><span class="sr-only">(current)</span></c:if></a>
 	            </li>
-				<li <c:if test="${gubun eq 2}">class="active"</c:if> >
-	            	<a href="/user/reservation/select.do?gubun=2">예약 조회 <c:if test="${gubun eq 2}"><span class="sr-only">(current)</span></c:if></a>
-	            </li>
-	            <li <c:if test="${gubun eq 3}">class="active"</c:if> >
-	            	<a href="/user/reservation/register.do?gubun=3">예약 하기  <c:if test="${gubun eq 3}"><span class="sr-only">(current)</span></c:if></a>
-	            </li>
-	            
           	</ul>	
 			</c:when>
 		</c:choose>

@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,12 +17,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import egovframework.com.reservation.common.Temporal;
 import egovframework.com.reservation.common.utils.DateTimeUtil;
@@ -115,8 +116,8 @@ public class RoomVO extends Temporal{
 	
 	/**
 	 * 사용여부
-	 * 0 : 미사용
-	 * 1 : 사용
+	 * 0 : 예약가능
+	 * 1 : 예약중
 	 */
 	@Column(name="USE_AT")
 	private int useAt;
@@ -145,9 +146,25 @@ public class RoomVO extends Temporal{
 	@Column(name="MODIFY_ID")
 	private String modifyId;
 
+	@OneToMany(mappedBy = "roomVO",cascade = CascadeType.DETACH,  orphanRemoval = true)
+	private List<RoomReservationVO> reservationVO = new ArrayList<RoomReservationVO>();
+	
 	@ManyToOne
-	@JoinColumn(name = "COMPANY_UUID", insertable = false, updatable = false)
+	@JoinColumn(name = "COMPANY_UUID", nullable = false, updatable = false)
 	private CompanyVO companyVO;
+	
+	public List<RoomReservationVO> getReservationVO() {
+		return reservationVO;
+	}
+
+	public void setReservationVO(List<RoomReservationVO> reservationVO) {
+		this.reservationVO = reservationVO;
+	}
+	
+	public void addToRservatrion(RoomReservationVO RoomReservationVO) {
+		this.reservationVO.add(RoomReservationVO);
+		RoomReservationVO.setRoomVO(this);
+	}
 
 	public CompanyVO getCompanyVO() {
 		return companyVO;
@@ -156,7 +173,7 @@ public class RoomVO extends Temporal{
 	public void setCompanyVO(CompanyVO companyVO) {
 		this.companyVO = companyVO;
 	}
-	
+
 	public String getRoomUUID() {
 		return roomUUID;
 	}
@@ -281,9 +298,9 @@ public class RoomVO extends Temporal{
 	}
 
 	public String getStrUseAt() {
-		String strUseAt = "미사용";
+		String strUseAt = "예약가능";
 		if(useAt == 1) {
-			strUseAt = "사용";
+			strUseAt = "예약중";
 		}
 		return strUseAt;
 	}

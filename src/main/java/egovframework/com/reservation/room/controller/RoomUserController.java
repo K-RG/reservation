@@ -6,12 +6,13 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import egovframework.com.reservation.common.model.SearchVO;
 import egovframework.com.reservation.common.utils.CheckParam;
@@ -25,6 +26,7 @@ import egovframework.com.reservation.room.service.RoomService;
 @Controller
 @RequestMapping("/user/room")
 public class RoomUserController {
+	private static final Logger logger = LoggerFactory.getLogger(RoomMngrController.class);
 	
 	@Autowired
 	private CompanyService companyService;
@@ -33,9 +35,24 @@ public class RoomUserController {
 	private RoomService roomService;
 	
 	@RequestMapping("/list.do")
-	public String firstFloorList(@RequestParam Map<String, String> paramMap,CompanyVO companyVO, Model model) {
+	public String firstFloorList(@RequestParam Map<String, String> paramMap,CompanyVO companyVO, Model model, SearchVO searchVO) {
+		addAttribute(model, searchVO);
 		//메뉴 구분
 		int gubun = paramMap.get("gubun") == null ? 1 : Integer.parseInt(paramMap.get("gubun").toString());
+		
+		int maxRoomFloor = roomService.findbyMaxRoomFloor();
+		logger.info("객실 최고 층수 ============="+maxRoomFloor);
+		logger.info("객실 검색 날짜 ============="+paramMap.get("startDay")+"-"+ paramMap.get("endDay"));
+		
+		//층별 객실 조회
+		List<RoomVO> roomList = roomService.findRoomList(null,gubun,0);
+		
+		model.addAttribute("gubun",gubun)
+				.addAttribute("maxRoomFloor",maxRoomFloor)
+				.addAttribute("roomList",roomList);
+	
+		
+		/*
 		String companyVO2 = "";
 		
 		if(paramMap.get("companyUUID") != null) {
@@ -54,19 +71,20 @@ public class RoomUserController {
 		//사업장 조회
 		companyVO = companyService.findOneCompany(companyVO2);
 		//사업장 별 객실 조회
-		List<RoomVO> roomList = roomService.findRoomListByCompanyUUID(gubun);
+		
+		
 		System.out.println("통합리스트 구분"+gubun);
 		System.out.println("통합리스트 유유아이디"+companyVO2);
 		System.out.println("룸리스트"+roomList.size());
 		System.out.println("룸 층수"+companyVO.getCompanyRoomFloor());
 		
-		model.addAttribute("gubun",gubun)
+		
 			.addAttribute("companyVO",companyVO)
 			.addAttribute("companyUUID",companyVO2)
 			.addAttribute("companyList",companyList)
 			.addAttribute("roomList",roomList)
 			.addAttribute("mode","list");
-		
+		*/
 		return "/user/room/list";
 	}
 	
@@ -81,6 +99,7 @@ public class RoomUserController {
 		if(!checkParam.getExists()){
 			return ReturnErrorView.returnErrorView(new String[]{"roomUUID", "객실 정보가 없습니다."}, requestInfo, model);
 		}
+		/*
 		//받아온 사업장 uuid
 		String companyUUID =  paramMap.get("companyUUID") == null ? 
 				companyService.findAllCompany().get(0).getCompanyUUID() :  paramMap.get("companyUUID");
@@ -88,13 +107,11 @@ public class RoomUserController {
 		System.out.println("등록 페이지 유유아이디"+companyUUID);
 		
 		companyVO = companyService.findOneCompany(companyUUID);
-		
-			roomVO = roomService.findOneRoom(roomVO.getRoomUUID());
-			companyVO = companyService.findOneCompany(roomVO.getCompanyVO().getCompanyUUID());
+		*/
+		roomVO = roomService.findOneRoom(roomVO.getRoomUUID());
 			
 		addAttribute(model, searchVO);
 		model.addAttribute("gubun",gubun)
-			.addAttribute("companyUUID",companyUUID)
 			.addAttribute("companyVO",companyVO)
 			.addAttribute("roomVO",roomVO);
 		return "/user/room/view";

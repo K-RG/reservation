@@ -42,8 +42,8 @@ public class RoomMngrController {
 		//메뉴 구분
 		int gubun = paramMap.get("gubun") == null ? 1 : Integer.parseInt(paramMap.get("gubun").toString());
 		String companyUUID = "";
-		if(paramMap.get("company") != null) {
-			companyUUID = paramMap.get("company");
+		if(paramMap.get("companyUUID") != null) {
+			companyUUID = paramMap.get("companyUUID");
 		}else if(companyService.findAllCompany().size()>0) {
 			companyUUID = companyService.findAllCompany().get(0).getCompanyUUID();
 		}else {
@@ -51,13 +51,14 @@ public class RoomMngrController {
 				.addAttribute("mode","write")
 				.addAttribute("message","사업장을 등록해주세요.");
 			return "/common/reservationError";
-		}							
+		}					
+		companyVO = companyService.findOneCompany(companyUUID);
 		//사업장 전체 조회
 		List<CompanyVO> companyList = companyService.findAllCompany();
-		//사업장 조회
-		companyVO = companyService.findOneCompany(companyUUID);
 		//사업장 별 객실 조회
-		List<RoomVO> roomList = roomService.findRoomListByCompanyUUID(gubun);
+		List<RoomVO> roomList = roomService.findRoomList(companyUUID, gubun,2);
+		
+		
 		
 		System.out.println("통합리스트 유유아이디"+companyUUID);
 		System.out.println("룸리스트"+roomList.size());
@@ -65,7 +66,6 @@ public class RoomMngrController {
 		
 		model.addAttribute("gubun",gubun)
 			.addAttribute("companyVO",companyVO)
-			.addAttribute("companyUUID",companyUUID)
 			.addAttribute("companyList",companyList)
 			.addAttribute("roomList",roomList)
 			.addAttribute("mode","list");
@@ -79,8 +79,8 @@ public class RoomMngrController {
 		int gubun = paramMap.get("gubun") == null ? 1 : Integer.parseInt(paramMap.get("gubun").toString());
 		System.out.println("등록컨트롤러 입장");
 		//받아온 사업장 uuid
-		String companyUUID =  paramMap.get("company") == null ? 
-				companyService.findAllCompany().get(0).getCompanyUUID() :  paramMap.get("company");
+		String companyUUID =  paramMap.get("companyUUID") == null ? 
+				companyService.findAllCompany().get(0).getCompanyUUID() :  paramMap.get("companyUUID");
 		
 		System.out.println("등록 페이지 유유아이디"+companyUUID);
 		
@@ -92,23 +92,25 @@ public class RoomMngrController {
 		}
 		addAttribute(model, searchVO);
 		model.addAttribute("gubun",gubun)
-			.addAttribute("company",companyUUID)
+			.addAttribute("companyUUID",companyUUID)
 			.addAttribute("companyVO",companyVO)
 			.addAttribute("roomVO",roomVO);
 		return "/mngr/room/write";
 	}
 	
 	@RequestMapping("/save.do")
-	public String save(@RequestParam Map<String,String> paramMap, RoomVO roomVO, Model model) {
-		CompanyVO companyVO = new CompanyVO(); 
+	public String save(@RequestParam Map<String,String> paramMap, RoomVO roomVO,CompanyVO companyVO, Model model) {
+		logger.info("====================Room====================");
+		companyVO = companyService.findOneCompany(companyVO.getCompanyUUID());
+		
+		roomVO.setCompanyVO(companyVO);
 		roomVO.setRegistDt(new Date());
 		roomVO.setRegistId("admin");
 		roomService.saveRoom(roomVO);
-		companyVO.addToRoom(roomVO);
-		logger.info("====================RoomSave===================="+roomVO.getCompanyVO().getCompanyUUID());
+		//companyVO.addToRoom(roomVO);
+		logger.info("====================RoomSave===================="+roomVO.getCompanyVO());
 		
-		
-		model.addAttribute("company",roomVO.getCompanyVO().getCompanyUUID());
+		model.addAttribute("company",roomVO.getCompanyVO());
 		
 		return "redirect:/mngr/room/list.do";
 	}

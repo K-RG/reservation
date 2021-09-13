@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +26,7 @@ import egovframework.com.reservation.room.service.RoomService;
 @Controller
 @RequestMapping("/user/company")
 public class CompanyUserController {
-
+	private static final Logger logger = LoggerFactory.getLogger(CompanyUserController.class);
 	@Autowired
 	private CompanyService companyService;
 	
@@ -37,7 +39,7 @@ public class CompanyUserController {
 		int gubun = paramMap.get("gubun") == null ? 1 : Integer.parseInt(paramMap.get("gubun").toString());
 				
 		List<CompanyVO> list = companyService.findAllCompany();
-
+		
 		model.addAttribute("list",list);
 		model.addAttribute("mode","list");
 		model.addAttribute("gubun",gubun);

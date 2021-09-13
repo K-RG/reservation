@@ -7,6 +7,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,13 +21,15 @@ import egovframework.com.reservation.common.utils.RequestInformation;
 import egovframework.com.reservation.common.utils.ReturnErrorView;
 import egovframework.com.reservation.company.model.CompanyVO;
 import egovframework.com.reservation.company.service.CompanyService;
+import egovframework.com.reservation.room.controller.RoomMngrController;
 import egovframework.com.reservation.room.model.RoomVO;
 import egovframework.com.reservation.room.service.RoomService;
 
 @Controller
 @RequestMapping("/mngr/company")
 public class CompanyMngrController {
-
+	private static final Logger logger = LoggerFactory.getLogger(CompanyMngrController.class);
+	
 	@Autowired
 	private CompanyService companyService;
 	
@@ -102,7 +106,7 @@ public class CompanyMngrController {
 	}
 	
 	@RequestMapping("/delete.do")
-	public String delete(@RequestParam Map<String,String> paramMap, HttpServletRequest request, Model model) {
+	public String delete(@RequestParam Map<String,String> paramMap, HttpServletRequest request, Model model, CompanyVO companyVO) {
 		
 		RequestInformation requestInfo = new RequestInformation(request);
 		
@@ -111,22 +115,11 @@ public class CompanyMngrController {
 		if(!checkParam1.getExists()){
 			return ReturnErrorView.returnErrorView(new String[]{"companyUUID", "사업장 정보가 없습니다."}, requestInfo, model);
 		}
-		String companyUUID = paramMap.get("companyUUID");
-		System.out.println("삭제 유유아이디"+companyUUID);
-		List<RoomVO> childRoomList = companyService.findChildList(companyUUID);
-		if(childRoomList != null && childRoomList.size()>0) {
-			int cnt = 0;
-			for(RoomVO r : childRoomList) {
-				if(companyUUID.equals(r.getCompanyVO().getCompanyUUID())) {
-					cnt++;
-				}
-				if(cnt > 0) {
-					return ReturnErrorView.returnErrorView(new String[]{"companyUUID", "사업장의 객실 정보가 존재합니다."}, requestInfo, model);
-				}
-			}
-		}
 		
+		String companyUUID = paramMap.get("companyUUID");
+			
 		companyService.deleteCompany(companyUUID);
+		
 		return "redirect:/mngr/company/list.do";
 	}
 	

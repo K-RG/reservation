@@ -12,7 +12,7 @@
 					<ul class="nav navbar-nav">
 						<li><a href="/user/company/list.do">사업장 보기</a></li>
 						<li><a href="/user/room/list.do">객실 보기</a></li>
-						<li><a href="/user/reservation/list.do">예약</a></li>
+						<li><a href="/user/reservation/select.do">나의 예약</a></li>
 						<li><a href="/mngr/company/list.do">관리자 페이지 이동</a></li>
 					</ul>
 				  

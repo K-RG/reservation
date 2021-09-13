@@ -68,6 +68,7 @@
 							<th class="text-center">기준 인원</th>
 							<th class="text-center">최대 인원</th>
 							<th class="text-center">기본 요금</th>
+							<th class="text-center">객실 상태</th>
 							<th class="text-center">관리</th>
 						</tr>
 					</thead>
@@ -93,6 +94,7 @@
 							<td class="text-center">${item.roomStandardPeople}</td>
 							<td class="text-center">${item.roomMaxPeople}</td>
 							<td class="text-center">${item.roomPriceStandard}</td>
+							<td class="text-center">${item.strUseAt}</td>
 	              			<td class="text-center">
 		              			<button type="button" class="btn btn-primary" onclick="fn_update('${item.roomUUID}')">수정</button>
 		              			<button type="button" class="btn btn-danger" onclick="fn_delete('${item.roomUUID}')">삭제</button>
@@ -128,7 +130,7 @@
 			comSubmit.setUrl("/mngr/room/register.do");
 			comSubmit.addParam("gubun",gubun);
 			comSubmit.addParam("mode",'write');
-			comSubmit.addParam("companyUUID",'${companyUUID}');
+			comSubmit.addParam("companyUUID",$("#companyUUID").val());
 			comSubmit.submit();
 		}
 		

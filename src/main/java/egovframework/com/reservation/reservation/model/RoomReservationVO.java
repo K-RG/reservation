@@ -36,12 +36,6 @@ public class RoomReservationVO extends Temporal{
 	private String roomReservationUUID;
 	
 	/*
-	 * 방 키
-	 */
-	@Column(name = "ROOM_UUID")
-	private String roomUUID;
-	
-	/*
 	 * 예약 인원
 	 */
 	@Column(name = "ROOM_RESERVATION_PEOPLE")
@@ -56,19 +50,19 @@ public class RoomReservationVO extends Temporal{
 	/*
 	 * 예약자 전화번호 앞자리
 	 */
-	@Column(name = "ROOM_RESERVATION_CELL_Phone_FST")
+	@Column(name = "ROOM_RESERVATION_CELL_PHONE_FST")
 	private int roomReservationCellPhoneFst;
 	
 	/*
 	 * 예약자 전화번호 가운데 자리
 	 */
-	@Column(name = "ROOM_RESERVATION_CELL_Phone_SND")
+	@Column(name = "ROOM_RESERVATION_CELL_PHONE_SND")
 	private int roomReservationCellPhoneSnd;
 	
 	/*
 	 * 예약자 전화번호 끝자리
 	 */
-	@Column(name = "ROOM_RESERVATION_CELL_Phone_TRD")
+	@Column(name = "ROOM_RESERVATION_CELL_PHONE_TRD")
 	private int roomReservationCellPhoneTrd;
 	
 	/*
@@ -109,18 +103,6 @@ public class RoomReservationVO extends Temporal{
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Column(name = "END_DAY", nullable = false)
 	private Date endDay;
-	
-	@ManyToOne 	
-	@JoinColumn(name = "ROOM_UUID", insertable = false, updatable = false)
-	private RoomVO roomVO;
-	
-	public RoomVO getRoomVO() {
-		return roomVO;
-	}
-
-	public void setRoomVO(RoomVO roomVO) {
-		this.roomVO = roomVO;
-	}
 
 	/**
 	 * 등록일
@@ -146,20 +128,24 @@ public class RoomReservationVO extends Temporal{
 	@Column(name="MODIFY_ID")
 	private String modifyId;
 
+	@ManyToOne 	
+	@JoinColumn(name = "ROOM_UUID", updatable = false, nullable = false)
+	private RoomVO roomVO;
+	
+	public RoomVO getRoomVO() {
+		return roomVO;
+	}
+
+	public void setRoomVO(RoomVO roomVO) {
+		this.roomVO = roomVO;
+	}
+	
 	public String getRoomReservationUUID() {
 		return roomReservationUUID;
 	}
 
 	public void setRoomReservationUUID(String roomReservationUUID) {
 		this.roomReservationUUID = roomReservationUUID;
-	}
-
-	public String getRoomUUID() {
-		return roomUUID;
-	}
-
-	public void setRoomUUID(String roomUUID) {
-		this.roomUUID = roomUUID;
 	}
 
 	public int getRoomReservationPeople() {
@@ -250,10 +236,10 @@ public class RoomReservationVO extends Temporal{
 	}
 	
 	public String getStrRoomReservationPaymentStatus() {
-		String strRoomReservationPaymentStatus = "접수";
+		String strRoomReservationPaymentStatus = "결제대기중";
 		
 		switch(roomReservationPaymentStatus) {
-			case 1 : strRoomReservationPaymentStatus = "미결";
+			case 1 : strRoomReservationPaymentStatus = "결제완료";
 				break;
 			case 2 : strRoomReservationPaymentStatus = "완결";
 				break;

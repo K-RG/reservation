@@ -15,6 +15,7 @@
 	<div class="row">
 	<jsp:include page="/WEB-INF/jsp/user/template/left.jsp" flush="true"></jsp:include>
 	<script type="text/javascript" src="<c:url value='/resources/ckEditor/ckeditor.js'/>"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 	
 		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 		<h2 class="sub-header">ROOM RESERVATION ${fn:toUpperCase(mode)}</h2>
@@ -39,6 +40,26 @@
 	</div>
 	<jsp:include page="/WEB-INF/jsp/common/commonForm.jsp" flush="true"></jsp:include>
 	<script type="text/javascript">
+		var roomReservationUUID = '${roomReservationUUID}';	
+		var company = '${companyBank}';
+		var depositor = '${depositor}';
+		
+		if(roomReservationUUID.trim() != null && company.trim() != null ){
+			Swal.fire({
+	            icon: 'success',
+	            title: '예약 완료',
+	            html: '<table><tr><th>예약 번호</th><td colspan="3">'+roomReservationUUID+"</td></tr>"
+	            		+"<tr><th>은행명</th><td>${fn:split(companyBank,'-')[0]}</td><th>예금주</th><td>${fn:split(companyBank,'-')[2]}</td></tr>"
+	            		+"<tr><th>계좌번호</th><td> ${fn:split(companyBank,'-')[1]}</td><th>입금자명</th><td>"+depositor+"</td></tr>"
+	            		+"</table>"
+	        })
+		}else if(roomReservationUUID.trim() != null || companyBank.trim() != null ){
+			Swal.fire({
+	            icon: 'success',
+	            title: '예약 완료',
+	            text: '예약 번호 : '+roomReservationUUID
+	        })
+		}
 		$("#btnSelect").click(function(){
 			var comSubmit = new ComSubmit();
 			comSubmit.setUrl("/user/reservation/view.do");

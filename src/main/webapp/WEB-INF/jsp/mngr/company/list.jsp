@@ -143,10 +143,12 @@
 		}
 		
 		function fn_delete(uuid){
+			if(confirm("사업장을 삭제하시겠습니까?")){
 			var comSubmit = new ComSubmit();
 			comSubmit.setUrl("/mngr/company/delete.do");
 			comSubmit.addParam("companyUUID",uuid);
 			comSubmit.submit();
+			}else return false;
 		}
 	</script>
 </body>
